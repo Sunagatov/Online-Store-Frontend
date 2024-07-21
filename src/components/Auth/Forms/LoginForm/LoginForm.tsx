@@ -1,4 +1,5 @@
 'use client'
+
 import useAuthRedirect from '@/hooks/useAuthRedirect'
 import Button from '@/components/UI/Buttons/Button/Button'
 import FormInput from '@/components/UI/FormInput/FormInput'
@@ -15,6 +16,11 @@ import { setCookie } from '@/utils/cookieUtils'
 import Link from 'next/link'
 import Image from 'next/image'
 import eye from '../../../../../public/eye-password-hide.svg'
+
+type LoginResponse = {
+  token: string
+  refreshToken: string
+}
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false)
@@ -39,7 +45,7 @@ export default function LoginForm() {
   const onSubmit: SubmitHandler<IFormValues> = async (formData) => {
     try {
       setLoading(true)
-      const data = await apiLoginUser(formData)
+      const data: LoginResponse = await apiLoginUser(formData)
 
       if (data) {
         await setCookie('token', data.token, { path: '/' })
@@ -60,35 +66,43 @@ export default function LoginForm() {
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col font-bold text-disabled "
     >
-      {errorMessage && (
-        <div className="mt-4  text-negative">{errorMessage}</div>
-      )}
+      {errorMessage && <div className="mt-4 text-negative">{errorMessage}</div>}
+
       <FormInput
-        id="email"
-        register={register}
-        name="email"
-        type="text"
-        label=""
-        placeholder="Email"
+        className="mt-0"
         error={errors.email}
+        id="email"
+        label=""
+        name="email"
+        placeholder="Email"
+        register={register}
+        type="text"
       />
       <div className="relative font-bold">
+        {/* Updated: Alphabetically sorted props */}
         <FormInput
+          className="mt-0"
+          error={errors.password}
           id="password"
+          label=""
+          name="password"
+          placeholder="Password"
           register={register}
           type={passwordVisible ? 'text' : 'password'}
-          name="password"
-          label=""
-          placeholder="Password"
-          error={errors.password}
-          className="mt-0"
         />
+
         <button
-          type="button"
-          onMouseDown={() => setPasswordVisible(true)}
-          onMouseUp={() => setPasswordVisible(false)}
-          onMouseLeave={() => setPasswordVisible(false)}
           className="absolute inset-y-0 right-0 mt-5 flex items-center pr-3"
+          onMouseDown={() => {
+            setPasswordVisible(true)
+          }}
+          onMouseLeave={() => {
+            setPasswordVisible(false)
+          }}
+          onMouseUp={() => {
+            setPasswordVisible(false)
+          }}
+          type="button"
         >
           <div className="h-[18px] w-[18px] sm:h-[31px] sm:w-[28px]">
             <Image src={eye} width={24} alt="Logo" priority />
@@ -96,16 +110,16 @@ export default function LoginForm() {
         </button>
       </div>
       <Link
-        onClick={resetOpenModal}
-        href={'/forgotpass'}
         className="mt-2 flex items-center font-bold text-focus"
+        href={'/forgotpass'}
+        onClick={resetOpenModal}
       >
         Forgot password?
       </Link>
       <Button
+        className="mt-6 flex w-full items-center justify-center hover:bg-brand-solid-hover"
         id="login-btn"
         type="submit"
-        className="mt-6 flex w-full items-center justify-center hover:bg-brand-solid-hover"
       >
         {loading ? <Loader /> : 'Login'}
       </Button>
