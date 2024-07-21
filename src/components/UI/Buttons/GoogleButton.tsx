@@ -17,7 +17,7 @@ const GoogleAuthButton: React.FC = () => {
     >
       <div className="ml-6 flex h-9 w-9 items-center justify-center rounded-full bg-white">
         <div className="flex h-[24px] w-[24px] items-center justify-center sm:h-[31px] sm:w-[28px]">
-          <Image src={google} width={24} alt="google logo" priority />
+          <Image alt="google logo" priority src={google} width={24} />
         </div>
       </div>
       <span className="flex-grow font-bold tracking-wider text-secondary">

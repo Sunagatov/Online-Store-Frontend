@@ -17,7 +17,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import eye from '../../../../../public/eye-password-hide.svg'
 
-type LoginResponse = {
+interface LoginResponse {
   token: string
   refreshToken: string
 }
@@ -79,7 +79,6 @@ export default function LoginForm() {
         type="text"
       />
       <div className="relative font-bold">
-        {/* Updated: Alphabetically sorted props */}
         <FormInput
           className="mt-0"
           error={errors.password}
@@ -93,15 +92,9 @@ export default function LoginForm() {
 
         <button
           className="absolute inset-y-0 right-0 mt-5 flex items-center pr-3"
-          onMouseDown={() => {
-            setPasswordVisible(true)
-          }}
-          onMouseLeave={() => {
-            setPasswordVisible(false)
-          }}
-          onMouseUp={() => {
-            setPasswordVisible(false)
-          }}
+          onMouseDown={() => setPasswordVisible(true)}
+          onMouseLeave={() => setPasswordVisible(false)}
+          onMouseUp={() => setPasswordVisible(false)}
           type="button"
         >
           <div className="h-[18px] w-[18px] sm:h-[31px] sm:w-[28px]">

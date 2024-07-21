@@ -67,9 +67,9 @@ function AuthModal() {
             <LoginForm />
           ) : (
             <Link
+              className="mt-[10px] flex w-full text-[gray] hover:text-focus"
               href={'/auth/login'}
               onClick={handleClickSwitchFrom}
-              className="mt-[10px] flex w-full text-[gray] hover:text-focus"
             >
               Already have account?{' '}
               <span className="ml-[5px] text-primary underline">Sign In</span>
@@ -86,11 +86,11 @@ function AuthModal() {
           </div>
           <div className="mb-6 mt-4 text-xs text-tertiary">
             By signing in to this app, you agree to our{' '}
-            <a href="/terms" className="font-bold text-brand underline">
+            <a className="font-bold text-brand underline" href="/terms">
               Terms of Service
             </a>{' '}
             and{' '}
-            <a href="/privacy" className="font-bold text-brand underline">
+            <a className="font-bold text-brand underline" href="/privacy">
               Privacy Policy
             </a>
             .
@@ -101,10 +101,10 @@ function AuthModal() {
             <div className="flex justify-center font-bold text-tertiary">
               <p className=" ">No account? </p>
               <Link
+                className="ml-1 font-bold text-brand"
                 href={'/auth/registration'}
                 id="register-btn"
                 onClick={handleClickSwitchFrom}
-                className="ml-1 font-bold text-brand"
               >
                 Create one
               </Link>
