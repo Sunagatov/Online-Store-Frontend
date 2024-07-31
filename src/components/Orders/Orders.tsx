@@ -20,7 +20,7 @@ export default function OrdersForm() {
   const [status, setStatus] = useState('')
   const [customerEmail, setCustomerEmail] = useState('')
   const token = useStoreData(useAuthStore, (state) => state.token)
-  const resetCart = useCombinedStore((state) => state.resetCart)
+  const resetCart = useStoreData(useCombinedStore, (state) => state.resetCart)
 
   useEffect(() => {
     const queryString = window.location.search
@@ -50,7 +50,9 @@ export default function OrdersForm() {
   }
 
   if (status === 'complete') {
-    resetCart() // FIXME: this doesn't work
+    if (resetCart) {
+      resetCart()
+    } // FIXME: this doesn't work
 
     return (
       <section id="success" className="p-4">
