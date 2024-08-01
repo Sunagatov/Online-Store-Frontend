@@ -8,7 +8,13 @@ import Link from 'next/link'
 export default function CartFull() {
   const { tempItems, totalPrice, removeFullProduct, remove, add } =
     useCombinedStore()
-  const { token } = useAuthStore()
+  const { token, userData } = useAuthStore()
+  const disableCheckOut = !userData?.address
+  let checkout: JSX.Element | string = 'Go to checkout'
+
+  if (!disableCheckOut) {
+    checkout = <Link href={'/checkout'}>{checkout}</Link>
+  }
 
   return (
     <div className="h-{513px} mx-auto flex min-w-[328px] flex-col px-4 md:max-w-[800px]">
@@ -27,14 +33,20 @@ export default function CartFull() {
 
       <div className="mt-4 flex justify-between font-semibold ">
         <p>Subtotal:</p>
-        <p className="">${totalPrice.toFixed(2)}</p>
+        <p>${totalPrice.toFixed(2)}</p>
       </div>
+      {disableCheckOut && (
+        <div>
+          <p className="text-red-500">Specify address in account</p>
+        </div>
+      )}
       <div className="flex justify-center">
         <Button
           id="go-checkout-btn"
           className="my-6 h-14 w-full text-lg font-medium sm:w-[211px]"
+          disabled={disableCheckOut}
         >
-          <Link href={'/checkout'}>Go to checkout</Link>
+          {checkout}
         </Button>
       </div>
     </div>
