@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { api } from '@/services/apiConfig/apiConfig'
-import { useRouter } from 'next/navigation'
+import { ReadonlyURLSearchParams, useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/authStore'
 import { useCombinedStore } from '@/store/store'
 import Image from 'next/image'
@@ -10,6 +10,9 @@ import order from '../../../public/orders_stub.png'
 import Button from '@/components/UI/Buttons/Button/Button'
 import Link from 'next/link'
 import { useStoreData } from '@/hooks/useStoreData'
+import { useSearchParams } from 'next/navigation'
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import { CacheAxiosResponse } from 'axios-cache-interceptor'
 
 interface PaymentSessionStatus {
   status: string
@@ -19,14 +22,16 @@ interface PaymentSessionStatus {
 export default function OrdersForm() {
   const [status, setStatus] = useState('')
   const [customerEmail, setCustomerEmail] = useState('')
-  const token = useStoreData(useAuthStore, (state) => state.token)
+  const token: string | null | undefined = useStoreData(
+    useAuthStore,
+    (state) => state.token,
+  )
   const resetCart = useCombinedStore((state) => state.resetCart)
-  const router = useRouter()
+  const router: AppRouterInstance = useRouter()
+  const urlParams: ReadonlyURLSearchParams = useSearchParams()
 
   useEffect(() => {
-    const queryString = window.location.search
-    const urlParams = new URLSearchParams(queryString)
-    const sessionId = urlParams.get('sessionId')
+    const sessionId: string | null = urlParams.get('sessionId')
     const config = {
       headers: { Authorization: `Bearer ${token}` },
     }
@@ -37,14 +42,18 @@ export default function OrdersForm() {
           `/payment/status?sessionID=${sessionId}`,
           config,
         )
-        .then((res): PaymentSessionStatus => res.data)
+        .then(
+          (
+            res: CacheAxiosResponse<PaymentSessionStatus>,
+          ): PaymentSessionStatus => res.data,
+        )
         .then((data: PaymentSessionStatus) => {
           setStatus(data.status)
           setCustomerEmail(data.customerEmail)
         })
         .catch((err) => console.error(err))
     }
-  }, [token])
+  }, [token, urlParams])
 
   useEffect(() => {
     if (status === 'open') {

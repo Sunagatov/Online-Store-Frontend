@@ -10,11 +10,6 @@ export default function CartFull() {
     useCombinedStore()
   const { token, userData } = useAuthStore()
   const disableCheckOut = !userData?.address
-  let checkout: JSX.Element | string = 'Go to checkout'
-
-  if (!disableCheckOut) {
-    checkout = <Link href={'/checkout'}>{checkout}</Link>
-  }
 
   return (
     <div className="h-{513px} mx-auto flex min-w-[328px] flex-col px-4 md:max-w-[800px]">
@@ -46,7 +41,11 @@ export default function CartFull() {
           className="my-6 h-14 w-full text-lg font-medium sm:w-[211px]"
           disabled={disableCheckOut}
         >
-          {checkout}
+          {disableCheckOut ? (
+            'Go to checkout'
+          ) : (
+            <Link href={'/checkout'}>{'Go to checkout'}</Link>
+          )}
         </Button>
       </div>
     </div>
