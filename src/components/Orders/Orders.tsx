@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { api } from '@/services/apiConfig/apiConfig'
-import { ReadonlyURLSearchParams, useRouter } from 'next/navigation'
+import { ReadonlyURLSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/store/authStore'
 import { useCombinedStore } from '@/store/store'
 import Image from 'next/image'
@@ -11,8 +11,8 @@ import Button from '@/components/UI/Buttons/Button/Button'
 import Link from 'next/link'
 import { useStoreData } from '@/hooks/useStoreData'
 import { useSearchParams } from 'next/navigation'
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { CacheAxiosResponse } from 'axios-cache-interceptor'
+import Loader from '@/components/UI/Loader/Loader'
 
 interface PaymentSessionStatus {
   status: string
@@ -20,14 +20,13 @@ interface PaymentSessionStatus {
 }
 
 export default function OrdersForm() {
-  const [status, setStatus] = useState('')
   const [customerEmail, setCustomerEmail] = useState('')
+  const [loading, setLoading] = useState(true)
   const token: string | null | undefined = useStoreData(
     useAuthStore,
     (state) => state.token,
   )
   const resetCart = useCombinedStore((state) => state.resetCart)
-  const router: AppRouterInstance = useRouter()
   const urlParams: ReadonlyURLSearchParams = useSearchParams()
 
   useEffect(() => {
@@ -36,10 +35,11 @@ export default function OrdersForm() {
       headers: { Authorization: `Bearer ${token}` },
     }
 
+    setLoading(true)
     if (token) {
       api
         .get<PaymentSessionStatus>(
-          `/payment/status?sessionID=${sessionId}`,
+          `/payment/order?sessionId=${sessionId}`,
           config,
         )
         .then(
@@ -48,19 +48,22 @@ export default function OrdersForm() {
           ): PaymentSessionStatus => res.data,
         )
         .then((data: PaymentSessionStatus) => {
-          setStatus(data.status)
           setCustomerEmail(data.customerEmail)
+          resetCart()
+          setLoading(false)
         })
         .catch((err) => console.error(err))
     }
-  }, [token, urlParams])
+  }, [token, urlParams, resetCart])
 
-  useEffect(() => {
-    if (status === 'open') {
-      router.push('/checkout')
-    }
-    resetCart() // FIXME: it doesn't drop the counter
-  }, [status, resetCart, router])
+  if (loading) {
+    // Display a loading spinner while BE creates order
+    return (
+      <div className="flex min-h-[100vh] w-full items-center justify-center">
+        <Loader />
+      </div>
+    )
+  }
 
   return (
     <section id="success" className="p-4">
