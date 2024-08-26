@@ -13,7 +13,11 @@ export default function Button({
   children,
   id,
 }: Readonly<PropsBtn>) {
-  const styles = twMerge(defaultStyles, className)
+  const styles = twMerge(
+    defaultStyles,
+    className,
+    disabled ? 'bg-gray-400 cursor-not-allowed' : '',
+  )
 
   return (
     <button

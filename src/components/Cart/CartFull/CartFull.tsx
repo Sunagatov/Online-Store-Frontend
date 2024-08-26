@@ -1,14 +1,15 @@
 import Button from '@/components/UI/Buttons/Button/Button'
 import CartElement from '../CartElement/CartElement'
 import { useCombinedStore } from '@/store/store'
-import Link from 'next/link'
 import { ICartItem } from '@/types/Cart'
 import { useAuthStore } from '@/store/authStore'
+import Link from 'next/link'
 
 export default function CartFull() {
   const { tempItems, totalPrice, removeFullProduct, remove, add } =
     useCombinedStore()
-  const { token } = useAuthStore()
+  const { token, userData } = useAuthStore()
+  const disableCheckOut = !userData?.address
 
   return (
     <div className="h-{513px} mx-auto flex min-w-[328px] flex-col px-4 md:max-w-[800px]">
@@ -27,14 +28,24 @@ export default function CartFull() {
 
       <div className="mt-4 flex justify-between font-semibold ">
         <p>Subtotal:</p>
-        <p className="">${totalPrice.toFixed(2)}</p>
+        <p>${totalPrice.toFixed(2)}</p>
       </div>
+      {disableCheckOut && (
+        <div>
+          <p className="text-red-500">Specify address in account</p>
+        </div>
+      )}
       <div className="flex justify-center">
         <Button
           id="go-checkout-btn"
           className="my-6 h-14 w-full text-lg font-medium sm:w-[211px]"
+          disabled={disableCheckOut}
         >
-          <Link href={'/'}>Go to checkout</Link>
+          {disableCheckOut ? (
+            'Go to checkout'
+          ) : (
+            <Link href={'/checkout'}>{'Go to checkout'}</Link>
+          )}
         </Button>
       </div>
     </div>
