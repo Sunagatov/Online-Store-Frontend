@@ -4,7 +4,10 @@ export const changePassSchema = yup.object().shape({
   code: yup
     .string()
     .required('Code is a required field')
-    .matches(/^\d{3}-\d{3}-\d{3}$/, 'Invalid format. Use ###-###-###'),
+    .matches(
+      /^\d{9}$/,
+      'Invalid format. Please use this format #########. Enter exactly 9 digits without any separators.'
+    ),
   password: yup
     .string()
     .required('Password is a required field')
