@@ -23,7 +23,7 @@ jobs:
         run: docker build -t ${{ vars.DOCKER_HUB_ACCOUNT_NAME }}/${{ vars.DOCKER_IMAGE_NAME }}:latest-version .
 
       - name: Push a new docker image into Dockerhub
-        run: docker push ${{ vars.DOCKER_HUB_ACCOUNT_NAME }}/${{ vars.DOCKER_IMAGE_NAME }}:latest-version
+        run: docker push ${{ vars.DOCKER_HUB_ACCOUNT_NAME }}/${{ vars.DOCKER_IMAGE_NAME }}:latest-version 
 
   deploy-app-to-server:
     name: Deploy application to remote server via SSH
