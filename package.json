@@ -19,7 +19,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10",
-    "axios": "^1.6.6",
+    "axios": "^1.7.5",
     "axios-cache-interceptor": "^1.5.1",
     "date-fns": "^2.30.0",
     "debug": "^4.3.4",
