@@ -1,4 +1,5 @@
 'use client'
+
 import useAuthRedirect from '@/hooks/useAuthRedirect'
 import Button from '@/components/UI/Buttons/Button/Button'
 import FormInput from '@/components/UI/FormInput/FormInput'
@@ -12,10 +13,19 @@ import { loginSchema } from '@/validation/loginSchema'
 import { IFormValues } from '@/types/LoginForm'
 import { useErrorHandler } from '@/services/apiError/apiError'
 import { setCookie } from '@/utils/cookieUtils'
+import Link from 'next/link'
+import Image from 'next/image'
+import eye from '../../../../../public/eye-password-hide.svg'
+
+interface LoginResponse {
+  token: string
+  refreshToken: string
+}
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false)
   const { authenticate, setRefreshToken } = useAuthStore()
+  const [passwordVisible, setPasswordVisible] = useState(false)
   const { handleRedirectForAuth } = useAuthRedirect()
   const { errorMessage, handleError } = useErrorHandler()
   const {
@@ -30,11 +40,12 @@ export default function LoginForm() {
       password: '',
     },
   })
+  const { resetOpenModal } = useAuthStore()
 
   const onSubmit: SubmitHandler<IFormValues> = async (formData) => {
     try {
       setLoading(true)
-      const data = await apiLoginUser(formData)
+      const data: LoginResponse = await apiLoginUser(formData)
 
       if (data) {
         await setCookie('token', data.token, { path: '/' })
@@ -51,30 +62,57 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col font-bold text-disabled "
+    >
       {errorMessage && <div className="mt-4 text-negative">{errorMessage}</div>}
+
       <FormInput
-        id="email"
-        register={register}
-        name="email"
-        type="text"
-        label="Enter your email address"
-        placeholder="Enter your email address"
+        className="mt-0"
         error={errors.email}
-      />
-      <FormInput
-        id="password"
+        id="email"
+        label=""
+        name="email"
+        placeholder="Email"
         register={register}
-        type="password"
-        name="password"
-        label="Password"
-        placeholder="Password"
-        error={errors.password}
+        type="text"
       />
+      <div className="relative font-bold">
+        <FormInput
+          className="mt-0"
+          error={errors.password}
+          id="password"
+          label=""
+          name="password"
+          placeholder="Password"
+          register={register}
+          type={passwordVisible ? 'text' : 'password'}
+        />
+
+        <button
+          className="absolute inset-y-0 right-0 mt-5 flex items-center pr-3"
+          onMouseDown={() => setPasswordVisible(true)}
+          onMouseLeave={() => setPasswordVisible(false)}
+          onMouseUp={() => setPasswordVisible(false)}
+          type="button"
+        >
+          <div className="h-[18px] w-[18px] sm:h-[31px] sm:w-[28px]">
+            <Image src={eye} width={24} alt="Logo" priority />
+          </div>
+        </button>
+      </div>
+      <Link
+        className="mt-2 flex items-center font-bold text-focus"
+        href={'/forgotpass'}
+        onClick={resetOpenModal}
+      >
+        Forgot password?
+      </Link>
       <Button
+        className="mt-6 flex w-full items-center justify-center hover:bg-brand-solid-hover"
         id="login-btn"
         type="submit"
-        className="mt-6 flex w-full items-center justify-center hover:bg-brand-solid-hover"
       >
         {loading ? <Loader /> : 'Login'}
       </Button>

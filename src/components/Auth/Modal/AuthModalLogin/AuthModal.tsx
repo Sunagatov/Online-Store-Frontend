@@ -1,13 +1,12 @@
 'use client'
-import { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
 import LoginForm from '../../Forms/LoginForm/LoginForm'
 import RegistrationForm from '../../Forms/RegistrationForm/RegistrationForm'
 import Link from 'next/link'
-import Button from '@/components/UI/Buttons/Button/Button'
 import useAuthRedirect from '@/hooks/useAuthRedirect'
-import { useAuthStore } from '@/store/authStore'
+import GoogleAuthButton from '@/components/UI/Buttons/GoogleButton'
 
 enum SwitchType {
   Login = 'LOGIN',
@@ -18,7 +17,6 @@ function AuthModal() {
   const [switchForm, setSwitchForm] = useState<SwitchType>(SwitchType.Login)
   const pathname = usePathname()
   const { handleRedirectForAuth } = useAuthRedirect()
-  const { resetOpenModal } = useAuthStore()
 
   useEffect(() => {
     if (pathname !== '/') {
@@ -60,48 +58,57 @@ function AuthModal() {
         onKeyDown={() => {}}
         tabIndex={0}
       ></button>
-      <div className="flex h-full w-full flex-col overflow-y-scroll bg-white py-6 shadow-xl min-[440px]:w-[500px]">
-        <div className="px-4 sm:px-6">
-          <h2 className="text-4XL">Welcome back</h2>
+      <div className="flex h-full w-full  flex-col overflow-y-scroll bg-white py-6 shadow-xl min-[440px]:w-[500px]">
+        <div className="mr-6 flex items-center justify-center px-4 sm:px-6">
+          <h2 className="text-2xl">Sign in for Iced Latte</h2>
         </div>
         <div className="relative flex-1 px-4 sm:px-6">
           {switchForm === SwitchType.Login ? (
             <LoginForm />
           ) : (
             <Link
+              className="mt-[10px] flex w-full text-[gray] hover:text-focus"
               href={'/auth/login'}
               onClick={handleClickSwitchFrom}
-              className="mt-[10px] flex w-full text-[gray] hover:text-focus"
             >
               Already have account?{' '}
               <span className="ml-[5px] text-primary underline">Sign In</span>
             </Link>
           )}
-          {switchForm === SwitchType.Login && (
-            <Link
-              onClick={resetOpenModal}
-              href={'/forgotpass'}
-              className="mt-[40px] flex items-center justify-center text-focus"
-            >
-              Forgot password
-            </Link>
-          )}
-          <div className="mb-8 mt-6 h-[1px] w-full bg-brand-second" />
+
+          <div className=" my-6 flex items-center justify-center">
+            <div className=" h-[1px] w-full flex-grow bg-brand-second" />
+            <span className="mx-4 text-disabled">or</span>
+            <div className=" h-[1px] w-full flex-grow bg-brand-second" />
+          </div>
+          <div className="flex justify-center">
+            <GoogleAuthButton />
+          </div>
+          <div className="mb-6 mt-4 text-xs text-tertiary">
+            By signing in to this app, you agree to our{' '}
+            <a className="font-bold text-brand underline" href="/terms">
+              Terms of Service
+            </a>{' '}
+            and{' '}
+            <a className="font-bold text-brand underline" href="/privacy">
+              Privacy Policy
+            </a>
+            .
+          </div>
           {switchForm === SwitchType.Registration ? (
             <RegistrationForm />
           ) : (
-            <>
-              <h2 className="text-4XL">I’m new here</h2>
-              <Link href={'/auth/registration'}>
-                <Button
-                  id="register-btn"
-                  onClick={handleClickSwitchFrom}
-                  className="mt-6 w-full hover:bg-brand-solid-hover"
-                >
-                  Register
-                </Button>
+            <div className="flex justify-center font-bold text-tertiary">
+              <p className=" ">No account? </p>
+              <Link
+                className="ml-1 font-bold text-brand"
+                href={'/auth/registration'}
+                id="register-btn"
+                onClick={handleClickSwitchFrom}
+              >
+                Create one
               </Link>
-            </>
+            </div>
           )}
           {switchForm === SwitchType.Registration && (
             <p className="text-text-tertiary mt-4 text-xs font-medium">
@@ -119,4 +126,5 @@ function AuthModal() {
     </div>
   )
 }
+
 export default AuthModal
